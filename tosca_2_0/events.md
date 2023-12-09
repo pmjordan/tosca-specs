@@ -161,7 +161,7 @@ This pattern is used as follows:
   are a generalization of the `implementation artifacts` supported in
   TOSCA v1.x. Whereas TOSCA v1.x defines `primary` and `dependent`
   implementation artifacts, TOSCA v2.0 defines a single list of
-  handles. TOSCA v2.0 also supports per-handler input and output
+  handlers. TOSCA v2.0 also supports per-handler input and output
   definitions.
 - If all event handlers executed succesfully, a list of `triggers` are
   run. Triggers conditionally send new events along the service
@@ -237,7 +237,7 @@ define a state machine by defining the following:
   changes.
 
 The following example shows how the `Standard` interface in the Simple
-Profile could be described. The state machine implemented by the
+Profile which was an element of TOSCA 1.3 could be described. The state machine implemented by that
 `Standard` interface is shown in the following figure:
 ```mermaid
 stateDiagram-v2
@@ -257,11 +257,12 @@ data_types:
     validation:
       $valid_values:
         - $value: []
-        - - initial
+          - initial
           - created
           - configured
           - started
           - error
+   default: initial
     
 interface_types:
   Standard:
@@ -364,23 +365,25 @@ interface_types:
         constraints:
           $valid_values:
             - $value: []
-            - - initial
+              - initial
               - configured
               - established
               - added
               - removed
               - error
+       default: initial
       target_state:
         type: string
         constraints:
           $valid_values:
             - $value: []
-            - - initial
+              - initial
               - configured
               - established
               - added
               - removed
               - error
+       default: initial
     operations:
       pre_configure_source:
         preconditions:
@@ -455,14 +458,14 @@ interleaving operations defined in node types with with interface
 operations defined in the relationship types.  Unlike the *imperative
 workflows* in Version 1.x, the localized *mini workflows* specified in
 interface definitions have the following characteristics:
-- They apply to all nodes of a specific type, rather that to specific
+- They apply to all nodes of a specific type, rather than to specific
   nodes in a service template.
 - Events can be propagated based on the types used in requirement
   definitions and capability definitions without needing to identify
   specific target nodes by name.
 
 When nodes and relationships are organized in a service topology
-graph, these fine grained workflows propagate events across tge graph
+graph, these fine grained workflows propagate events across the graph
 which causes end-to-end behavior to emerge. This *emergent behavior*
 is a generalization of the automatically created declarative workflows
 of TOSCA v1.x.
@@ -470,12 +473,12 @@ of TOSCA v1.x.
 The remainder of this section illustrates how operations of interfaces
 defined in relationship types could be interleaved with interface
 operations defined on source and target nodes of this relationship. We
-use the `Standard` and `Configure` interface types defined in the
-Simple Profiles as example.
+use the `Standard` and `Configure` interface types that were contained in  
+Simple Profiles of V1.3 as example.
 
 The desired interleaving between interface operations on a
 relationship and interface operations on the source node of that
-relationships is shown in the following figure:
+relationship is shown in the following figure:
 ```mermaid
 sequenceDiagram
     Source Node->>Source Node: create
@@ -508,10 +511,10 @@ sequenceDiagram
     Relationship->>Relationship: add_target
 ```
 To correctly define this desired interleaving, the interface
-definitions in the `Root` relationship type and the `Root` node type
+definitions in a `Root` relationship type and a `Root` node type
 must add additional `preconditions` as well as additional
 `triggers`. The following shows the definition of the `Configure`
-interface in the `Root` relationship type:
+interface in such a `Root` relationship type:
 ```yaml
 relationship_types:
   Root:
@@ -545,8 +548,8 @@ of the `Root` relationship. This allows for validation of the triggers
 at design time.
 
 The following shows alternative syntax for sending events. In this
-syntax, the `target` and the 'event` are combined into a single `TOSCA
-Path` expression. This syntax has the advantage that it can identify
+syntax, the `target` and the `event` are combined into a single 'TOSCA
+Path' expression. This syntax has the advantage that it can identify
 *groups of nodes* or *groups of relationships* to which to send
 events.
 
@@ -569,7 +572,7 @@ events.
         on_failure:
           #here comes the content of on_failure
 ```
-An alternative grammar use a `set` keyword instead of `set_attribute`:
+An alternative grammar uses a `set` keyword instead of `set_attribute`:
 ```yaml
 #for each nodes of types [tosca.nodes.nfv.VNF]
   #for each entry in node_activities
@@ -597,7 +600,8 @@ since:
 - Nodes can define multiple capabilities, each of which can be
   targeted by multiple relationships of various types.
 
-An example is shown in the following figure:
+An example is shown in the following figure: 
+> To be provided
 
 This has the following implications:
 - `triggers` may need to send events to multiple relationships where
@@ -609,8 +613,9 @@ This has the following implications:
   be determined from the the requirement definitions and capability
   definitions in the node type.
 
-To accommodate these scnearios, we introduce the following new
-function:
+To accommodate these scnearios, we make use of the $for_each function (defined in 
+> To be provided
+) which has been introduced for this purpose:
 
 - `$for_each`: iterate over a list
 
@@ -639,9 +644,9 @@ node_types:
 ```
 ## Defining Service Lifecycle Management Actions
 
-Events definitions are supported not just in interfaces but also at
+Event definitions are supported not just in interfaces but also at
 the service template level. Service template events provide the
-mechanism for service designer to express which lifecycle management
+mechanism for a service designer to express which lifecycle management
 actions can be performed by external management systems or external
 operators. Events defined at the service template level provide the
 *intent* paradigm in TOSCA: they allow external systems to signal
@@ -699,7 +704,7 @@ in the following table:
 The following table compares TOSCA v2.0 *unified event handling*
 grammar with what's currently in Version 1.3.
 
-|Version 1.x|Version 2.0|Discussion|
+|Version 1.3|Version 2.0|Discussion|
 |---|---|---|
 ||interface properties and attributes|Version 1.x interfaces define `operations` and `notifications` only. V2.0 adds support for `properties` and `attributes` in interfaces to allow for interface-specific state variables.|
 ||INTERFACE|Interface properties or artifacts are identified using the `INTERFACE` keyword in ToscaPath expressions.|
